@@ -8,15 +8,23 @@ class Solution:
     def invertTree(self, root: TreeNode) -> TreeNode:
         if root == None:
             return None
+        invertedLeft = self.invertTree(root.left)
+        invertedRight = self.invertTree(root.right)
+        
+        root.left = invertedRight
+        root.right = invertedLeft
+        
+        return root
+        '''
         if root.left == None:
             if root.right==None:  # leaf node
                 return root
             else:
                 right_subtree = self.invertTree(root.right)
-                root.left = right_subtree # right side not empty
+                root.left = right_subtree # only right side not empty
                 root.right = None
                 return root
-        if root.right == None:
+        if root.right == None:  # only left side not empty
             left_subtree = self.invertTree(root.left)
             root.right = left_subtree # left not None
             root.left = None
@@ -36,4 +44,4 @@ class Solution:
             root.left = my_right
             root.right = temp
             return root
-        
+        '''
