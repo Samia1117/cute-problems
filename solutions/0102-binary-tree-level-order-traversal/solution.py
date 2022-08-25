@@ -5,31 +5,51 @@
 #         self.left = left
 #         self.right = right
 class Solution:
-    # we add root first, then left child, then right child
-    # if root is not null, then add root. Check left. Check right
-    def level_order_arr(self, root, level, level_dict):
-        if root == None:
+    
+    def dfs(self, v, depth, depthMap):
+        if v==None:
             return
-        
-        if level not in level_dict:
-            level_dict[level] = []
-        level_dict[level].append(root.val)
-        
-        if root.left != None:
-            self.level_order_arr(root.left, level+1, level_dict)
-        if root.right != None:
-            self.level_order_arr(root.right, level+1, level_dict)
+        if depth not in depthMap:
+            depthMap[depth] = []
             
+        depthMap[depth].append(v.val)
+        self.dfs(v.left, depth+1, depthMap)
+        self.dfs(v.right, depth+1, depthMap)
+        return
+    
     def levelOrder(self, root: Optional[TreeNode]) -> List[List[int]]:
-        level_dict = {}
-        level = 0
-        self.level_order_arr(root, level, level_dict)
         
-        sorted_level_tup = sorted(level_dict.items(), key=lambda x: x[0])
-        #print(sorted_level_tup)
-        larr = []
-        for tup in sorted_level_tup:
-            larr.append(tup[1])
-        #print(larr)
-        return larr
+        if root == None:
+            return []
+        
+        dMap = {}
+        self.dfs(root, 0, dMap) # the map gets populated and returned
+        
+#         # items = sorted(dMap.items(), key= lambda x:x[0])
+#         # return [i[1] for i in items]
+        return [dMap[k] for k in sorted(dMap)]
+        
+#         q = deque()
+#         q.append(root)
+#         result = []
+        
+#         while q:
+#             nextLevel = []  
+#             for i in range(len(q)):
+#                 popped = q.popleft()
+#                 nextLevel.append(popped.val)
+                
+#                 left = popped.left
+#                 right = popped.right
+                          
+#                 if left !=None:
+#                     q.append(left)
+#                 if right !=None:
+#                     q.append(right)
+#             result.append(nextLevel)
+
+        
+#         return result
+            
+            
         
