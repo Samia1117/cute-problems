@@ -1,45 +1,39 @@
 class Solution:
+            
     def lengthOfLongestSubstring(self, s: str) -> int:
 
-        runningMax = 0
-        seendict = {}
-        seen = []
-        sequenceStarted = 0
+        if s == "":
+            return 0
+        start = 0
+        maxLength = 0
+        usedChars = {}  # keep track of where this char was last seen
+        
         for i in range(len(s)):
-            letter = s[i]
-            if letter not in seendict:
-                seendict[letter] = i   # where this letter is
-                seen.append(letter)
-            else:   # found a repeat
-                #print("found repeat letter: ",letter, "dict: ", seendict)
-                maxForThisSequence = i - sequenceStarted
-                if maxForThisSequence >runningMax:
-                    runningMax = maxForThisSequence
-                #runningMaxes.append(i - sequenceStarted)
-                #print("sequence start, end: ", sequenceStarted, i)
-                #repeatIndex = seendict[letter]
-                sequenceStarted = seendict[letter]+1
-                
-                #print("reapeat index: ", repeatIndex)
-                #print("seen: ", seen)
-                
-                cutUntil = seen.index(letter)
-                #print("cutting until: ", cutUntil)
-                toRemove = seen[0:cutUntil+1]
-                #print("to remove is: ", toRemove)
-                seen = seen[cutUntil+1:]
-                #print("new seen is: ", seen)
-                while toRemove:
-                    del seendict[toRemove.pop()]
-                    
-                seendict[letter] = i
-                seen.append(letter)
-                #print("dictionary after change: ", seendict) 
-                
-        #print("last sequence started:", sequenceStarted)
-        #print("final dictionary ", seendict) 
-        #runningMaxes.append(len(seendict))
-        #print(runningMaxes)
-        runningMax = max(len(seendict), runningMax)
-        return runningMax
-                
+            if s[i] in usedChars and start <= usedChars[s[i]]:
+                start = usedChars[s[i]] + 1 # start at a new place; max seen for this letter
+            else:
+                maxLength = max(maxLength, i-start+1)
+            
+            usedChars[s[i]] = i
+        return maxLength
+            
+# It was a good DP attempt ...
+#       dp = [[0 for _ in range(len(s))] for k in range(len(s))]
+#         for i in range(len(s)):
+#             for j in range(i, len(s)):
+#                 if i==j:
+#                     dp[i][j] = 1
+#                 else:
+#                     if s[j] in set(s[i:j]):
+#                         break
+#                     else:
+#                         dp[i][j] = dp[i][j-1] + 1   
+#         lastCol = [max(dp[i]) for i in range(len(s))]
+#         return max(lastCol)
+        
+        
+        
+        
+        
+        
+        
