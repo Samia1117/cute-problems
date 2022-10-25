@@ -6,7 +6,6 @@ class Solution:
         recStack.add(node)
         
         for neighbor in adjDict[node]:
-            #print("neighbor is: ", neighbor)
             if neighbor in recStack:
                 return True
             if neighbor not in visited:
@@ -14,7 +13,7 @@ class Solution:
                     return True
         
         #print("recStack, visited were: ", [recStack, visited])
-        #print("## Done with current path")
+        # Done with current path from node -> end 
         recStack.remove(node)
         return False
         
@@ -63,8 +62,11 @@ class Solution:
             
             # Now dfs
             for neighbor in adjDict[root]:
+                # visited = set([root])
                 if self.dfsCycle(adjDict, neighbor, visited, recStack):
                     return False
+                else:
+                    print("visited is: ", visited)
             megaVisited.update(visited)
         
         if len(megaVisited) != len(allNodes):
