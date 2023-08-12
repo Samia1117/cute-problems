@@ -1,53 +1,47 @@
-class Trie:
+class Trie(object):
 
     def __init__(self):
-        """
-        Initialize your data structure here.
-        """
         self.trie = {}
 
-    def insert(self, word: str) -> None:
+    def insert(self, word):
         """
-        Inserts a word into the trie.
+        :type word: str
+        :rtype: None
         """
-        currentTrie = self.trie
-        for i in range(len(word)):
-            ch = word[i]
-            if ch not in currentTrie:
-                currentTrie[ch] = {}
-            currentTrie = currentTrie[ch]
-            
-        currentTrie["."] = {}   # mark this as a word
-        
-    def search(self, word: str) -> bool:
+        trie_ptr = self.trie
+        n = 0
+        for char in word:
+            if char not in trie_ptr:
+                trie_ptr[char] = {}
+            trie_ptr = trie_ptr[char]
+        trie_ptr["word"] = True
+
+    def search(self, word):
         """
-        Returns if the word is in the trie.
+        :type word: str
+        :rtype: bool
         """
-        currentTrie = self.trie
-        
-        for i in range(len(word)):
-            ch = word[i]
-            if ch not in currentTrie:
+        trie_ptr = self.trie
+        for char in word:
+            if char not in trie_ptr:
                 return False
-            currentTrie = currentTrie[ch]
-                
-        return "." in currentTrie.keys()
+            trie_ptr = trie_ptr[char]
+        if "word" in trie_ptr:
+            return True
+        return False
         
 
-    def startsWith(self, prefix: str) -> bool:
+    def startsWith(self, prefix):
         """
-        Returns if there is any word in the trie that starts with the given prefix.
+        :type prefix: str
+        :rtype: bool
         """
-        currentTrie = self.trie
-                                  
-        for i in range(len(prefix)):
-            ch = prefix[i]
-            if ch not in currentTrie:
+        trie_ptr = self.trie
+        for ch in prefix:
+            if ch not in trie_ptr:
                 return False
-            else:
-                currentTrie = currentTrie[ch]
+            trie_ptr = trie_ptr[ch]
         return True
-        
 
 
 # Your Trie object will be instantiated and called as such:
