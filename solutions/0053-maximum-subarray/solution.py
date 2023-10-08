@@ -1,55 +1,34 @@
-class Solution(object):
-    def maxSubArray(self, nums):
-        """
-        :type nums: List[int]
-        :rtype: int
-        """
-        if len(nums) == 0:
-            return 
-        i = 0
-        maxElt = -10000
-        maxSum = -10000
-        currentSum = 0
-        while i < len(nums):
-            elt = nums[i]
-            if elt > maxElt:
-                maxElt = elt
-            if currentSum + elt < 0:
-                i +=1
-                currentSum = 0
-            else:
-                currentSum += elt
-                if currentSum > maxSum:
-                    maxSum = currentSum
-                i +=1
-            #print("current sum: ", currentSum)
-
-        if maxSum == -10000:
-            return maxElt
-        return maxSum
-#         maxSum = -10000
-#         for i in range(len(nums)):
-#             for j in range(i, len(nums)):
-#                 currentSum = sum(nums[i:j+1])
-#                 if currentSum > maxSum:
-#                     maxSum = currentSum
-        
-#         return maxSum            
-                
-#         return self.helperMSA(nums, False)
-    def helperMSA(self, nums, includeLast):
-        
+class Solution:
+    def maxSubArray(self, nums: List[int]) -> int:
         if len(nums) == 0:
             return 0
-        if includeLast:
-            if len(nums) == 1:
-                return nums[0]
-            else:
-                return nums[0] + self.helperMSA(nums[1:], True)
-        
+        if len(nums) == 1:
+            return nums[0]
         else:
-            return max (
-            nums[0] + self.helperMSA(nums[1:], True),
-            self.helperMSA(nums[1:], False)
-            )
-        
+            # currentSum = 0
+            # keep adding to current sum as long as the sum stays > 0. 
+            # If sum must be <= 0, then we should simply choose the element with greatest value
+            # If ever sum goes beyond zero by adding the next element, then choose a new left pointer
+            # At the end we should compare whether maxElt or maxSum is greater
+            maxSum = -10000
+            maxElt = -10000
+            currentSum = 0
+
+            for i in range(len(nums)):
+                if currentSum + nums[i] < 0:
+                    if maxSum < currentSum:
+                        maxSum = currentSum
+                    currentSum = 0
+                else:
+                    currentSum += nums[i]
+                
+                if maxSum < currentSum:
+                    maxSum = currentSum
+                if nums[i] > maxElt:
+                    maxElt = nums[i]
+            
+            if maxElt < 0 or maxElt > maxSum:
+                maxSum = maxElt 
+            
+            return maxSum
+                
