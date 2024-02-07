@@ -1,20 +1,21 @@
-import numpy as np
 class Solution:
     def maxArea(self, height: List[int]) -> int:
-        maxarea = 0
-        r = len(height) -1
-        l = 0
+
+        if height == None or height == []:
+            return 0
         
-        while(l<r):
-            
-            area = (r-l)* min(height[l],height[r])
-            maxarea = max(area, maxarea)
-            
-            if height[r]>=height[l]: # this is the best that left could do
-                l +=1
+        n = len(height)
+        left, right = 0, n - 1
+
+        maxArea = 0
+        while (right != left):
+            w = right - left
+            newMaxArea = w * min(height[left], height[right])
+            maxArea = max(maxArea, newMaxArea)
+            if height[left] <= height[right]:
+                left += 1
             else:
-                r -=1
-        
-        return maxarea
-            
+                right -= 1
+
+        return maxArea
         
