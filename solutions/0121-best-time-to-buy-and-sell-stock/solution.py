@@ -1,17 +1,16 @@
-class Solution(object):
-    def maxProfit(self, prices):
-        """
-        :type prices: List[int]
-        :rtype: int
-        """
-        if len(prices) <=1:
-            return 0
+class Solution:
+    def maxProfit(self, prices: List[int]) -> int:
 
+        minSoFar = 10000
         maxProfit = 0
-        anchor = prices[0]
-        for i in range(1, len(prices)):
-            if prices[i] - anchor > maxProfit:
-                maxProfit = prices[i] - anchor
-            if prices[i] < anchor:
-                anchor = prices[i]
+
+        for price in prices:
+            if (price < minSoFar):
+                minSoFar = price
+
+            profit = price - minSoFar
+            if profit > maxProfit:
+                maxProfit = profit
+        
         return maxProfit
+        
