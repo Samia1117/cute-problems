@@ -1,39 +1,43 @@
 class Solution:
-            
     def lengthOfLongestSubstring(self, s: str) -> int:
 
-        if s == "":
+        if s == None:
             return 0
-        start = 0
-        maxLength = 0
-        usedChars = {}  # keep track of where this char was last seen
-        
-        for i in range(len(s)):
-            if s[i] in usedChars and start <= usedChars[s[i]]:
-                start = usedChars[s[i]] + 1 # start at a new place; max seen for this letter
+
+        n = len(s)
+        if n == 0:
+            return 0
+
+        hmap = {}
+        max_length = 0
+        current_length = 0
+
+        index = 0
+
+        while index < n:
+            ch = s[index]
+            # if haven't seen this character in current substring iteration
+            if ch not in hmap:
+                hmap[ch] = index
+                current_length += 1
+            # have seen this character before in current substring iteration
             else:
-                maxLength = max(maxLength, i-start+1)
-            
-            usedChars[s[i]] = i
-        return maxLength
-            
-# It was a good DP attempt ...
-#       dp = [[0 for _ in range(len(s))] for k in range(len(s))]
-#         for i in range(len(s)):
-#             for j in range(i, len(s)):
-#                 if i==j:
-#                     dp[i][j] = 1
-#                 else:
-#                     if s[j] in set(s[i:j]):
-#                         break
-#                     else:
-#                         dp[i][j] = dp[i][j-1] + 1   
-#         lastCol = [max(dp[i]) for i in range(len(s))]
-#         return max(lastCol)
-        
-        
-        
-        
-        
-        
-        
+                max_length = max(max_length, current_length)
+
+                # start new substring from where this character was last seen + 1
+                index = hmap[ch] + 1
+                if index == n:
+                    break
+                # reset current substring length and hashmap
+                current_length = 0
+                hmap = {}
+
+                # don't increment index below
+                continue
+
+            index += 1
+
+        max_length = max(max_length, current_length)
+        # print("hmap: ", hmap)
+
+        return max_length
