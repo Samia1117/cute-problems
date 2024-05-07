@@ -1,7 +1,6 @@
 class Solution:
     def minDistance(self, word1: str, word2: str) -> int:
-        
-        # let dp[i][j] = edit distance between word1[0:i] and word2[0:j]
+                # let dp[i][j] = edit distance between word1[0:i] and word2[0:j]
         # want: dp[m][n] where m-len(word1), n=len(word2)
         
         m = len(word1)
