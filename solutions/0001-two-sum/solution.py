@@ -1,27 +1,21 @@
-class Solution(object):
-    def twoSum(self, nums, target):
-        """
-        :type nums: List[int]
-        :type target: int
-        :rtype: List[int]
-        """
+class Solution:
+    def twoSum(self, nums: List[int], target: int) -> List[int]:
 
-        d = {}
-        i = 0
-        for num in nums:
-            keyNeeded = target - num
-            #if keyNeeded in d:
-                #return [d[keyNeeded], i]
-            #d[num] = i
-            d[keyNeeded] = [i] # i is the index of one of the numbers
-            i +=1
-        
-        i = 0
+        indices = []
+        d = {} # key = num, value = index of num
+        idx = 0
         for num in nums:
             if num in d:
-                if i!=d[num][0]:
-                    #print("i, d[num] ", [i, d[num][0]])
-                    d[num].append(i)
-                    return d[num]
-            i +=1
-        return []
+                if num+num == target:
+                    return [d[num], idx]
+            elif num not in d:
+                d[num] = idx
+            targetNum = target - num
+            if targetNum == num:
+                pass
+            elif targetNum in d:
+                # found !
+                ret = [d[num], d[targetNum]]
+                return ret
+            idx += 1
+        
