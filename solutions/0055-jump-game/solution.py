@@ -1,35 +1,47 @@
-class Solution(object):
-    def canJump(self, nums):
-        """
-        :type nums: List[int]
-        :rtype: bool
-        """
-        # Let dp[i][j] = if it is possible to go from index i to j
-        # Return true if dp[i][n-1] true for any i s.t. i <= n-2
+class Solution:
+
+    # def canReachIndex(self, index, nums):
+
+    #     if index == 0:
+    #         return True
+        
+    #     if nums[index-1]
+    def canJump(self, nums: List[int]) -> bool:
+
         n = len(nums)
         if n <= 1:
             return True
-
-        canReach = [False for i in range(n)]
-        canReach[0] = True
-
-        # Keep track of index up to which we already know we can jump
-        maxJumpSofar = 0
-        for i in range(n):
-            if not canReach[i]:
-                continue
-            # If we can't reach beyond what we already know we can reach using nums[i], then skip nums[i]
-            if i + nums[i] <= maxJumpSofar:
-                continue
-            # Only start from
-            maxJumpForIdx = min(nums[i] + i, n)
-            for j in reversed(range(maxJumpSofar + 1, min(maxJumpForIdx + 1, n))):
-                if j == n-1:
-                    return True
-                canReach[j] = True
-
-            if maxJumpSofar < maxJumpForIdx:
-                maxJumpSofar = maxJumpForIdx
         
-        return canReach[n-1]
-                
+        '''
+        Forward pass way
+        '''
+        # dp = [False for i in range(n)] # dp[i] = canJump to state i
+        # dp[0] = True
+
+        # for i in range(n):
+        #     if dp[i] == True:
+        #         jump = nums[i]
+        #         furthest_jump = min(n-1, i + jump)
+        #         print(f"furthest jump = {furthest_jump}")
+        #         for j in range(i+1, furthest_jump+1):
+        #             dp[j] = True
+        
+        # return dp[n-1]
+
+        '''
+        Backward pass way
+        '''
+        dp = [False for i in range(n)] 
+        # dp[i] = can reach final state from position i
+        dp[-1] = True
+
+        for i in range(n-2, -1, -1):
+            jump = nums[i]
+            furthest_jump = min(n-1, i + jump)
+            for j in range(i + 1, furthest_jump + 1):
+                if dp[j] == True:
+                    dp[i] = True
+                    break
+        return dp[0]
+        # print("DP: ", dp)
+        
