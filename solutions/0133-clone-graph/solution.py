@@ -6,62 +6,30 @@ class Node:
         self.neighbors = neighbors if neighbors is not None else []
 """
 
+from typing import Optional
 class Solution:
-    def cloneGraph(self, node: 'Node') -> 'Node':
-        
+
+    visited = {}
+
+    def cloneGraph(self, node: Optional['Node']) -> Optional['Node']:
+
         if not node:
-            return node
+            return None
         
-        q = deque([node])
-        copies = {node.val: Node(node.val, [])}
+        if node in self.visited:
+            return self.visited[node]
         
-        while q:
-            popped = q.popleft()
-            copy = copies[popped.val]
-            
-            for neigh in popped.neighbors:
-                if neigh.val not in copies:
-                    copies[neigh.val] = Node(neigh.val, [])
-                    q.append(neigh)
-                    
-                copy.neighbors.append(copies[neigh.val])
+        new_node = Node(node.val)
+        self.visited[node] = new_node
+
+        new_neighbors = []
+        for n in node.neighbors:
+            new_neighbor = self.cloneGraph(n)
+            new_neighbors.append(new_neighbor)
         
-        return copies[node.val]
-    
-#         q = deque()
-#         q.append(node)
-#         discovered = set()
-#         discovered.add(node.val)
+        new_node.neighbors = new_neighbors
+
+        return new_node
         
-#         root = Node(node.val, [])
-#         q2 = deque()
-#         q2.append(root)
+
         
-#         seenNodes = {}
-#         seenNodes[node.val] = root
-        
-#         while q:
-#             popped = q.popleft()
-#             popped2 = q2.popleft()
-            
-#             for neighbor in popped.neighbors:
-#                 try:
-#                     existingNode = seenNodes[neighbor.val]
-#                     popped2.neighbors.append(existingNode)
-#                 except KeyError:
-#                     copy = Node(neighbor.val)
-#                     popped2.neighbors.append(copy)
-#                     seenNodes[neighbor.val] = copy
-                
-#                 if neighbor.val not in discovered:
-#                     q.append(neighbor)
-#                     q2.append(copy)
-                    
-#                 discovered.add(neighbor.val)
-                
-#         return root
-                
-                
-                
-                
-                
