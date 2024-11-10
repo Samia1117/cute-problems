@@ -1,94 +1,87 @@
 class Solution:
-    
-    def all_blanks(self, grid):
-        n = len(grid)
-        m = len(grid[0])
-        for i in range(n):
-            for j in range(m): 
-                if grid[i][j] != 0:
-                    return False
-        return True
-    
-    def all_rotten(self, grid):
-        blanks = 0
-        n = len(grid)
-        m = len(grid[0])
-        for i in range(n):
-            for j in range(m):
-                if grid[i][j] == 1:
-                    return False
-                elif grid[i][j] == 0:
-                    blanks +=1
-                    
-        if blanks == n*m:   # all blanks
+
+    def isInBounds(self, row, col, maxRow, maxCol):
+
+        if row < 0 or row >= maxRow:
             return False
-        
+        if col < 0 or col >= maxCol:
+            return False
+
         return True
     
-    def getPos(self, row, col, maxCol):
-        return row*maxCol + col
+    def getUid(self, row, col, maxCol):
+        return row * maxCol + col
+
+    def getRowColFromId(self, uid, maxCol):
+        row = uid // maxCol # 5 // 3 = 1
+        col = uid % maxCol  # 5 % 3 = 2
+                            # So row = 1, col = 2
+
+        return [row, col]
     
-    def offGrid(self, row, col, maxCol, maxRow):
-        if row>=maxRow or col>=maxCol or row<0 or col<0:
-            return True
+    '''
+    Checks if elt at row,col will rot at this timestep
+    '''
+    def will_rot(self, rotten, row, col, max_row, max_col):
+        deltas = [[-1, 0], [1, 0], [0, -1], [0, 1]]
+        for delta in deltas:
+            row_delta = delta[0]
+            col_delta = delta[1]
+            if self.isInBounds(row + row_delta, col + col_delta, max_row, max_col):
+                if (row + row_delta, col + col_delta) in rotten:
+                    return True # this cell will also rot
+
         return False
-    
-    #def dfsOranges(self, row, col, maxCol, maxRow, visited)
-                
+
+
     def orangesRotting(self, grid: List[List[int]]) -> int:
-        
-        n = len(grid)
-        m = len(grid[0])
-        visited = set()
-        rotten_ones = deque()
-        for i in range(n):
-            for j in range(m):
+
+        max_row = len(grid)
+        if max_row == 0:
+            return -1
+        max_col = len(grid[0])
+
+        rotten = set()
+        not_rotten = set()
+        neutral = set()
+
+        for i in range(max_row):
+            for j in range(max_col):
                 if grid[i][j] == 2:
-                    pos = self.getPos(i, j, m)
-                    rotten_ones.append(pos)
-        i = 0
-        visited = set()
-        # print("rotten ones at start are: ", rotten_ones)
-        while rotten_ones and not self.all_rotten(grid):
-            next_cohort = []
-            while rotten_ones:
-                rotten = rotten_ones.pop()
-                visited.add(rotten)
-            
-                rottenx = rotten//m
-                rotteny = rotten%m
-
-                moves = [[0, 1], [1, 0], [-1, 0], [0, -1]]
-                for move in moves:
-                    x = move[0] + rottenx
-                    y =  move[1] + rotteny
-                    if not self.offGrid(x, y, m, n):
-                        xyPos = self.getPos(x, y, m)
-                        if xyPos not in visited:
-                            if grid[x][y] == 1:
-                                grid[x][y] = 2
-                                next_cohort.append(xyPos)
-
-            rotten_ones.extendleft(next_cohort)
-                        
-            # print("Got grid now:", grid)
-            # print("rotten ones at i are: ", rotten_ones)
-            # print("visited are: ", visited)
-            i+=1
-            
-        if self.all_blanks(grid):
-            return 0
+                    rotten.add((i, j))
+                elif grid[i][j] == 1:
+                    not_rotten.add((i, j))
+                else:
+                    neutral.add((i, j))
         
-        if not self.all_rotten(grid):
+        iters = 0
+        max_iters = max_row * max_col
+        prev_rotten_length = len(rotten)
+
+        # Iterate through the 'non-rotten' and pull changes from its rotten neighbors
+        while iters < max_iters:
+            # print(f"rotten oranges = {rotten}, non_rotten = {not_rotten}")
+            will_rot_this_timestep = set()
+            for elt in not_rotten:
+                if self.will_rot(rotten, elt[0], elt[1], max_row, max_col):
+                    will_rot_this_timestep.add(elt)
+            not_rotten = not_rotten - will_rot_this_timestep
+            rotten.update(will_rot_this_timestep)
+            if len(rotten) == prev_rotten_length:   # if there was no change since last time step
+                break
+            prev_rotten_length = len(rotten)
+            iters += 1
+        
+        if len(not_rotten) > 0: # if we were left with some oranges that did not rot
             return -1
         
-        return i
-        
-        
-        
-        
-        
-        
-        
-        
+        return iters
+
+
+
+
+
+
+
+
         
