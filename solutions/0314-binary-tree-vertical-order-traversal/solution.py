@@ -6,52 +6,39 @@
 #         self.right = right
 class Solution:
 
+    def dfs(self, node, depth, direction_val, graph):
+        if not node:
+            return
+        
+        if direction_val not in graph:
+            graph[direction_val] = []
+        
+        graph[direction_val].append((depth, node.val))
+        self.dfs(node.left, depth + 1, direction_val - 1, graph)
+        self.dfs(node.right, depth + 1, direction_val + 1, graph)
+
 
     def verticalOrder(self, root: Optional[TreeNode]) -> List[List[int]]:
-        d = {}
-            # d -> dictionary 
-            # key = counter value
-            # value = node.val for every node that has counter value = key
-            # final answer is = d.values()
 
-        def traverse(node, counter, height, d):
-            # function goes here
-            if node == None:
-                return
+        graph = {}
+        self.dfs(root, 0, 0, graph)
+        # print(f'Graph = {graph.items()}')
 
-            if counter not in d:
-                d[counter] = []
-            d[counter].append((node.val, height)) # most likely this will be the height sorted order if I traverse 
+        items = sorted(graph.items(), key=lambda x:x[0])    # sort by column order
+        values = [item[1] for item in items]    # extract values of the dictionary (ignoring key=column order)
+        # print(f"values = {values}")
 
-            if node.left != None:
-                traverse(node.left, counter - 1 , height + 1, d)
-            
-            if node.right != None:
-                traverse(node.right, counter + 1, height + 1, d)
+        # function to map [[(3,4), (1,2)], [(5,6)] ] -> [[2, 4], [6]]
+        def mapper(x):
+            x = sorted(x, key=lambda x: x[0])
+            vals = [y[1] for y in x]
+            return vals
 
-            return
+        mapped_values = list(map(mapper, values))
+        return mapped_values
 
-        if root == None:
-            return []
 
-        # d[0] = root.val
-        # init counter
-        counter = 0
-        traverse(root, counter, 0, d)
 
-        sort1 = sorted(list(d.keys()))
 
-        values_in_key_order = [d[i] for i in sort1]
-        # print("values_in_key_order: ", values_in_key_order)
 
-        sorted_tup_list = [sorted(tup_list, key = lambda x: x[1]) for tup_list in values_in_key_order]
         
-        # now only grab the first element in the tuple which is the node value from each list element in sorted_tup_list
-        return [[tup[0] for tup in lst] for lst in sorted_tup_list]
-
-
-
-
-
-
-
