@@ -1,85 +1,61 @@
 from threading import Condition
-from threading import RLock
+from threading import Lock
 
 class BoundedBlockingQueue(object):
 
-    def __init__(self, capacity):
-        """
-        :type capacity: int
-        """
-        self.bq = deque()
-        self.current_size = 0
-        self.capacity = capacity
+    def __init__(self, capacity: int):
+        self.queue = deque()
+        self.cap = capacity
 
-        # lock is open to being acquired at initialization
-        self.q_empty = Condition()
-        self.q_full = Condition()
-        # self.rlock = RLock()
+        self.cond = Condition()
 
-        self.cv = Condition()
+        self.enq_lock = Lock()
+        self.deq_lock = Lock()
 
-    def enqueue(self, element):
-        """
-        :type element: int
-        :rtype: void
-        """
-        with self.cv:
-            while self.current_size == self.capacity:
-                # self.q_full.wait()
-                self.cv.wait()
+        self.deq_lock.acquire()
 
-            self.cv.acquire()
+    def enqueue(self, element: int) -> None:
 
-            # do some work
-            if self.current_size < self.capacity:
-                self.bq.append(element)
-                self.current_size += 1
-
-            self.cv.notify()
-            self.cv.release()
-
-        # release the threads who are waiting for q to be not empty
+        self.enq_lock.acquire()
+        self.queue.append(element)
         
+        if self.deq_lock.locked():
+            self.deq_lock.release()
+        if len(self.queue) < self.cap:
+            self.enq_lock.release()
 
-    def dequeue(self):
-        """
-        :rtype: int
-        """
-        # acquire the lock for ensuring q is not empty
+        # self.cond.acquire()
+        # while len(self.queue) == self.cap:
+        #     self.cond.wait()
+        
+        # self.queue.append(element)
+        # # print(f'Self.q = {self.queue}')
+        # self.cond.notify_all()
+        # self.cond.release()
 
-        # self.rlock.acquire()
-        with self.cv:
-            while self.current_size == 0:
-                # self.q_empty.wait()
-                self.cv.wait()
+    def dequeue(self) -> int:
 
-            # self.cv.acquire()
-            print("Has lock?: ", self.cv.acquire())
-            popped = self.bq.popleft()
-            self.current_size -= 1
+        self.deq_lock.acquire()
+        elt = self.queue.popleft()
 
-            # self.q_full.notify()
-            self.cv.notify()
-            self.cv.release()
+        if self.enq_lock.locked():
+            self.enq_lock.release()
 
-        # self.q_not_empty.acquire()
-        # do some work 
-        # popped = self.bq.popleft()
-        # self.current_size -= 1
+        if len(self.queue) > 0:
+            self.deq_lock.release()
 
-        # release the lock for threads waiting on q not to be full
-        # self.q_full.notify_all()
-        # self.q_empty.notify_all()
+        return elt
 
-        # self.q_not_empty.release()
-        # self.rlock.release()
-        return popped
+        # self.cond.acquire()
+        # while len(self.queue) == 0:
+        #     self.cond.wait()
 
-        '''The while loop checking for the application’s condition is necessary because wait() can return after an arbitrary long time, and the condition which prompted the notify() call may no longer hold true. '''
+        # elt = self.queue.popleft()  # Note, the elt has already been popped so cannot do anything more about it 
+        # # print(f'Self.q = {self.queue}')
+        # self.cond.notify_all()
+        # self.cond.release()
+        # return elt
 
-    def size(self):
-        """
-        :rtype: int
-        """
-        return self.current_size
+    def size(self) -> int:
+        return len(self.queue)
         
