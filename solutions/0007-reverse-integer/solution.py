@@ -1,28 +1,20 @@
 class Solution:
-    
-    def zero_check(self, new):
-        while new[0] == '0':
-            if len(new)==1:
-                break
-            new = new[1:]
-        return new
-    
     def reverse(self, x: int) -> int:
-        strint = str(x)
-        new = ""
-        if strint[0] == '-':
-            new += '-'
-            strint = strint[1:]
-        l = len(strint)
-        for i in range(l):
-            new += strint[l-i-1]
-            
-        # zero check
-        if new[0] == '0':
-            new = self.zero_check(new)
-        elif new[0] == '-' and new[1] == '0':
-            new = '-' + self.zero_check(new[1:])
 
-        if int(new) > 2**31 -1 or int(new) <-2**31:
-            return 0
-        return new
+        negative = False
+        if abs(x) != x:
+            x = abs(x)
+            negative = True
+
+        rev = 0
+        while x:
+            x, rem = divmod(x, 10)
+            rev = rev * 10 + rem
+            if rev > 2**31 - 1:
+                return 0
+
+        if negative:
+            rev = -1 * rev
+        print("rev = ", rev)
+        return rev
+        
