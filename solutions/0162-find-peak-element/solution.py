@@ -15,7 +15,7 @@ class Solution:
             else:
                 # strictly descending sequence
                 high = mid
-        return low
+        return high
         
 
 
