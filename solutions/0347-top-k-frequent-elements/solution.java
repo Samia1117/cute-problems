@@ -1,50 +1,46 @@
 class Solution {
 
-    class PairComparator implements Comparator<Pair<Integer, Integer>> {
+    class EntryComparator implements Comparator<Map.Entry<Integer, Integer>> {
 
         @Override
-        public int compare(Pair<Integer, Integer> p1, Pair<Integer, Integer> p2) {
-            return p2.getValue() - p1.getValue();   // compare based on second element
+        public int compare(Map.Entry<Integer, Integer> p1, Map.Entry<Integer, Integer> p2) {
+            return p1.getValue() - p2.getValue(); // compare frequency 
         }
     }
+
     public int[] topKFrequent(int[] nums, int k) {
         
         HashMap<Integer, Integer> numToCountMap = new HashMap<>();
+        if (k <= 0) {
+            return nums;
+        }
 
         for (int num: nums) {
             if (!numToCountMap.containsKey(num)) {
                 numToCountMap.put(num, 0);
             }
-            numToCountMap.put(num, numToCountMap.get(num) + 1);  // increment how many times 'num' has been seen
+            // increment the frequency of num everytime it is seen
+            numToCountMap.put(num, numToCountMap.get(num) + 1);  
         }
 
-        // System.out.println("numToCountMap = " + numToCountMap);
+        // PriorityQueue<Map.Entry<Integer, Integer>> pq = new PriorityQueue<>((a, b) -> a.getValue() - b.getValue());
 
-        PriorityQueue<Pair<Integer, Integer>> pq = new PriorityQueue<>((a, b) -> a.getValue() - b.getValue());
-        // PriorityQueue<Pair<Integer, Integer>> pq = new PriorityQueue<>(Collections.reverseOrder());
-        
-        List<Pair<Integer, Integer>> pairs = numToCountMap.entrySet().stream()
-                                    .map(e -> new Pair<Integer, Integer> (e.getKey(), e.getValue()) )
-                                    .collect(Collectors.toList());
+        PriorityQueue<Map.Entry<Integer, Integer>> pq = new PriorityQueue<>(new EntryComparator());
 
-        for (Pair<Integer, Integer> pair: pairs) {
-            pq.add(pair);
+        // Add the top k elements to the priority queue. Remove whenever numElts exceeds k
+        for (Map.Entry<Integer, Integer> entry: numToCountMap.entrySet()) {
+            pq.add(entry);
             if (pq.size() > k) {
-                while (pq.size() > k) {
-                    pq.poll();
-                }
+                pq.poll();
             }
         }
 
-        // System.out.println("PQ = " + pq);
-
-        int[] ret = new int[k];
-        for (int i=0; i<k; i++) {
-            ret[i] = pq.poll().getKey();
+        int[] toRet = new int[k];
+        int i = 0;
+        while (!pq.isEmpty()) {
+            toRet[i] = pq.poll().getKey();
+            i += 1;
         }
-
-        return ret;
-
-        // for (Entry<Integer, Integer> kv: )
+        return toRet;
     }
 }
