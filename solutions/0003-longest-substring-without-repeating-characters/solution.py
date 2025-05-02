@@ -1,43 +1,33 @@
-class Solution:
-    def lengthOfLongestSubstring(self, s: str) -> int:
-
-        if s == None:
-            return 0
-
-        n = len(s)
-        if n == 0:
-            return 0
+class Solution(object):
+    def lengthOfLongestSubstring(self, s):
+        """
+        :type s: str
+        :rtype: int
+        """
 
         hmap = {}
-        max_length = 0
-        current_length = 0
+        max_len = 0
 
-        index = 0
+        l, r = 0, 0
+        n = len(s)
 
-        while index < n:
-            ch = s[index]
-            # if haven't seen this character in current substring iteration
+        while r < n:
+            # print("hmap: ", hmap)
+            ch = s[r]
             if ch not in hmap:
-                hmap[ch] = index
-                current_length += 1
-            # have seen this character before in current substring iteration
+                hmap[ch] = r
             else:
-                max_length = max(max_length, current_length)
+                max_len = max(r-l + 1, max_len)
 
-                # start new substring from where this character was last seen + 1
-                index = hmap[ch] + 1
-                if index == n:
-                    break
-                # reset current substring length and hashmap
-                current_length = 0
-                hmap = {}
+                # shrink the window (l, r)
+                char_at = hmap[ch]
+                while l <= char_at:
+                    l += 1
+            max_len = max(r - l + 1, max_len)
+            hmap[ch] = r
+            r += 1
 
-                # don't increment index below
-                continue
+        max_len = max(r - l + 1, max_len)
+        return max_len - 1
 
-            index += 1
-
-        max_length = max(max_length, current_length)
-        # print("hmap: ", hmap)
-
-        return max_length
+        
