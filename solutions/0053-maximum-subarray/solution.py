@@ -1,34 +1,21 @@
 class Solution:
     def maxSubArray(self, nums: List[int]) -> int:
-        if len(nums) == 0:
-            return 0
-        if len(nums) == 1:
-            return nums[0]
-        else:
-            # currentSum = 0
-            # keep adding to current sum as long as the sum stays > 0. 
-            # If sum must be <= 0, then we should simply choose the element with greatest value
-            # If ever sum goes beyond zero by adding the next element, then choose a new left pointer
-            # At the end we should compare whether maxElt or maxSum is greater
-            maxSum = -10000
-            maxElt = -10000
-            currentSum = 0
 
-            for i in range(len(nums)):
-                if currentSum + nums[i] < 0:
-                    if maxSum < currentSum:
-                        maxSum = currentSum
-                    currentSum = 0
-                else:
-                    currentSum += nums[i]
-                
-                if maxSum < currentSum:
-                    maxSum = currentSum
-                if nums[i] > maxElt:
-                    maxElt = nums[i]
+        n = len(nums)
+
+        if n == 0:
+            return 0
+        
+        max_sum = nums[0]
+        current_sum = nums[0]
+
+        for i in range(1, n):
             
-            if maxElt < 0 or maxElt > maxSum:
-                maxSum = maxElt 
-            
-            return maxSum
-                
+            # Note, nums[i] + current_sum is going to be greater than nums[i] only if current_sum is positive. 
+            # If current_sum is not positive, it won't help to use it. We may as well start from nums[i]
+            current_sum = max(nums[i] + current_sum, nums[i])
+            max_sum = max(max_sum, current_sum)
+
+        return max_sum
+
+        
