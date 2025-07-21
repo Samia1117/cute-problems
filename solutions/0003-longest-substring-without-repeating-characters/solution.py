@@ -1,33 +1,20 @@
-class Solution(object):
-    def lengthOfLongestSubstring(self, s):
-        """
-        :type s: str
-        :rtype: int
-        """
+class Solution:
+    def lengthOfLongestSubstring(self, s: str) -> int:
 
-        hmap = {}
-        max_len = 0
-
-        l, r = 0, 0
         n = len(s)
+        ans = 0
+        # charToNextIndex stores the index after current character
+        charToNextIndex = {}
 
-        while r < n:
-            # print("hmap: ", hmap)
-            ch = s[r]
-            if ch not in hmap:
-                hmap[ch] = r
-            else:
-                max_len = max(r-l + 1, max_len)
+        i = 0
+        # try to extend the range [i, j]
+        for j in range(n):
+            print(f'i, j = {i, j}')
+            if s[j] in charToNextIndex:
+                i = max(charToNextIndex[s[j]], i)
+                # i = charToNextIndex[s[j]]
 
-                # shrink the window (l, r)
-                char_at = hmap[ch]
-                while l <= char_at:
-                    l += 1
-            max_len = max(r - l + 1, max_len)
-            hmap[ch] = r
-            r += 1
+            ans = max(ans, j - i + 1)
+            charToNextIndex[s[j]] = j + 1
 
-        max_len = max(r - l + 1, max_len)
-        return max_len - 1
-
-        
+        return ans
