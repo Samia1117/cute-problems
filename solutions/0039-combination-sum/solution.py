@@ -29,13 +29,9 @@ class Solution:
         results_set = set([])
         for comb in self.valid_combs:
             res = []
-
-            elt_indx = 0
-            res = []
-            for elt in comb:
+            for elt_indx, elt in enumerate(comb):
                 for i in range(elt):
                     res.append(candidates[elt_indx])
-                elt_indx += 1
             res_str = "-".join([str(a) for a in res])
             if res_str not in results_set:
                 results.append(res)
