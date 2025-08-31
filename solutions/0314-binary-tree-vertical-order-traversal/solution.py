@@ -5,40 +5,30 @@
 #         self.left = left
 #         self.right = right
 class Solution:
-
-    def dfs(self, node, depth, direction_val, graph):
-        if not node:
+    def verticalOrderRec(self, root, row, col, col_dict): 
+        if not root:
             return
-        
-        if direction_val not in graph:
-            graph[direction_val] = []
-        
-        graph[direction_val].append((depth, node.val))
-        self.dfs(node.left, depth + 1, direction_val - 1, graph)
-        self.dfs(node.right, depth + 1, direction_val + 1, graph)
 
+        if col not in col_dict:
+            col_dict[col] = []
+        col_dict[col].append((root.val, row))
+
+        self.verticalOrderRec(root.left, row+1, col-1, col_dict)
+        self.verticalOrderRec(root.right, row+1, col+1, col_dict)
 
     def verticalOrder(self, root: Optional[TreeNode]) -> List[List[int]]:
 
-        graph = {}
-        self.dfs(root, 0, 0, graph)
-        # print(f'Graph = {graph.items()}')
+        col_dict = {}
 
-        items = sorted(graph.items(), key=lambda x:x[0])    # sort by column order
-        values = [item[1] for item in items]    # extract values of the dictionary (ignoring key=column order)
-        # print(f"values = {values}")
+        self.verticalOrderRec(root, 0, 0, col_dict)
 
-        # function to map [[(3,4), (1,2)], [(5,6)] ] -> [[2, 4], [6]]
-        def mapper(x):
-            x = sorted(x, key=lambda x: x[0])
-            vals = [y[1] for y in x]
-            return vals
+        col_dict = sorted(col_dict.items())
+        # print(f'col_dict = {col_dict}')
 
-        mapped_values = list(map(mapper, values))
-        return mapped_values
+        ans = []
+        for tup in col_dict:  # e.g. [(3, 0), (15, 2)]
+            vals = sorted(tup[1], key=lambda x: x[1])
+            ans.append([v[0] for v in vals]) # [3, 15]
 
-
-
-
-
-        
+        # print(f'ans = {ans}')
+        return ans
