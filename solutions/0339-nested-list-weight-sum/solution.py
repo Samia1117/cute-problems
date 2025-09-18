@@ -30,46 +30,37 @@
 #    def getInteger(self):
 #        """
 #        @return the single integer that this NestedInteger holds, if it holds a single integer
-#        Return None if this NestedInteger holds a nested list
+#        The result is undefined if this NestedInteger holds a nested list
 #        :rtype int
 #        """
 #
 #    def getList(self):
 #        """
 #        @return the nested list that this NestedInteger holds, if it holds a nested list
-#        Return None if this NestedInteger holds a single integer
+#        The result is undefined if this NestedInteger holds a single integer
 #        :rtype List[NestedInteger]
 #        """
 
 class Solution:
-    def depthSum(self, nestedList: List[NestedInteger]) -> int:
+    def __init__(self):
+        self.val = 0
 
-        if len(nestedList) == 0:
-            return 0
-
-        ret = 0
-        depth = 1
-        prevList = nestedList
-
-        while True:
-            # isolate the elements at depth i
-            elems = [x for x in prevList if x.isInteger()]
-            # isolate the lists at depth i - will be used at depth i+1
-            lsts = [x for x in prevList if x.getList() != None]
-
-            if len(elems) != 0:
-                # sum elems weighted by depth
-                ret += sum([x.getInteger() * depth for x in elems])
-            if len(lsts) == 0:
-                # no more lists, only elems
-                break
-            else:
-                prevList = []
-                for lst in lsts:
-                    prevList += lst.getList()
-            
-            # increment depth as we look at next level of lists
-            depth += 1
+    def recDepthSum(self, depth, nestedInt):
+        if nestedInt.isInteger():
+            self.val += nestedInt.getInteger() * depth
+            return 
+        else:
+            for elt in nestedInt.getList():
+                self.recDepthSum(depth + 1, elt)
         
-        return ret
+    def depthSum(self, nestedList: List[NestedInteger]) -> int:
+        # if nestedList.isInteger():
+        #     return nestedList.getInteger()
+
+        for nestedInt in nestedList:
+            self.recDepthSum(1, nestedInt)
+        
+        return self.val
+
+
         
