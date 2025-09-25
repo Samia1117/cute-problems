@@ -2,27 +2,31 @@ from threading import Condition
 
 class BoundedBlockingQueue(object):
 
-    # BoundedBlockingQueue b = BoundedBlockingQueue()
-    # b.enqueue(0)
     def __init__(self, capacity: int):
-        self.capacity = capacity
-        self.queue = deque()
+        self.cap = capacity
         self.cond = Condition()
-        
-    def enqueue(self, element: int) -> None: 
-        with self.cond: # only enqueue if queue not full
-            while len(self.queue) >= self.capacity:
+        self.q = deque()
+        # Python condition vs lock vs semaphore vs barrier
+        '''
+        Lock: Mutual exclusion for shared resource. Call lock.lock() while operating on critical section/shared resource. Then call unlock()
+        Condition: wait on some condition, blocked until notify() is called
+        Semaphore: Limit concurrent access to n threads at a time (Semaphore(n)), block after n
+        Barrier: Blocks until all required threads call wait() - i.e. awaits the state where n number of threads have had a chance to 'line up next to the barrier'
+        '''
+
+    def enqueue(self, element: int) -> None:
+        with self.cond:
+            while len(self.q) == self.cap:
                 self.cond.wait()
-            self.queue.append(element)
+            self.q.append(element)
             self.cond.notifyAll()
 
     def dequeue(self) -> int:
-        with self.cond: # only deque if queue empty
-            while len(self.queue) == 0:
+        with self.cond:
+            while len(self.q) == 0:
                 self.cond.wait()
             self.cond.notifyAll()
-            return self.queue.popleft()
+            return self.q.popleft()
 
     def size(self) -> int:
-        return len(self.queue)
-        
+        return len(self.q)
