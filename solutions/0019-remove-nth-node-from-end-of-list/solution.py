@@ -5,35 +5,28 @@
 #         self.next = next
 class Solution:
     def removeNthFromEnd(self, head: Optional[ListNode], n: int) -> Optional[ListNode]:
-        
-        i = 0
-        headPtr = head
-        while head != None:
-            i +=1
-            head = head.next
 
-        checkUntil = i-n
-        j = 0
-        prev = None
-        ret = headPtr
-        while j <= checkUntil:
-            # update pointers
-            if j== checkUntil:
-                print("got to checkUntil: ", j)
-                nextNode = headPtr.next
-                if prev !=None:
-                    print("updating pointers to skip head = ", headPtr)
-                    prev.next = nextNode
-                    print("nextnode is: ", nextNode)
-                    break
-                else:
-                    return nextNode
-            prev = headPtr
-            headPtr = headPtr.next
-            j+=1
+        # traverse once to calculate size of linked list
+
+        size = 0
+        head_ptr = head
+        while head != None:
+            head = head.next
+            size += 1
         
-        return ret
-                
+        if size == 1:
+            return None
+
+        k = size - n # we need kth index from the head
+        if k == 0:
+            return head_ptr.next
             
-        
+        head_ptr2 = head_ptr
+        for i in range(k):
+            if i == k-1:
+                head_ptr.next = head_ptr.next.next
+            else:
+                head_ptr = head_ptr.next
+
+        return head_ptr2
         
