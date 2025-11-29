@@ -1,16 +1,13 @@
 class Solution:
     def maxProfit(self, prices: List[int]) -> int:
 
-        minSoFar = 10000
-        maxProfit = 0
+        max_profit = 0
+        min_bought_at = sys.maxsize
 
         for price in prices:
-            if (price < minSoFar):
-                minSoFar = price
-
-            profit = price - minSoFar
-            if profit > maxProfit:
-                maxProfit = profit
+            min_bought_at = min(min_bought_at, price)
+            diff = price - min_bought_at
+            max_profit = max(max_profit, diff)
         
-        return maxProfit
+        return max_profit
         
