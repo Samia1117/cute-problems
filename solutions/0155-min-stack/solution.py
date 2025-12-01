@@ -1,40 +1,36 @@
 class MinStack:
 
     def __init__(self):
-        self.min_vals = deque()
         self.stack = deque()
 
     def push(self, val: int) -> None:
-        
-        # if (len(self.min_vals) == 0):
-        #     self.min_vals.append(val)
-        # elif (self.min_vals[-1] > val ):
-        #     self.min_vals.append(val)
-        # else:
-        #     self.min_vals.append(self.min_vals[-1])
-        
-        self.stack.append(val)
-        val = min(val, self.min_vals[-1] if self.min_vals else val)
-        self.min_vals.append(val)
-        
 
+        if not self.stack:
+            self.stack.append((val, val))
+        else:
+            self.stack.append((val, min(val, self.stack[-1][1])))
+        # print(f'after push = {self.stack}')
+
+    # Remove the top element from the stack (no need to return it)
+    # [(2,2), (0, 0), (3, 0), (0, 0)]
+    # min = 0
+    # pop = [(2,2), (0, 0), (3, 0)]
+    # min = 0
     def pop(self) -> None:
-        
-        if (len(self.min_vals) !=0):
-            self.min_vals.pop()
-        
         self.stack.pop()
-        
+        # print(f'after pop = {self.stack}')
 
+    # Return the last added element (at the 'top') in the stack, but don't remove it from the stack ('peek')
     def top(self) -> int:
-        
-        return self.stack[-1]
-        
+        # print(f'return top from = {self.stack}')
+        return self.stack[-1][0] # deque[-1] = last added, deque[0] = first added
 
+    
+    # Return the minimum elt. in the stack, but don't remove it. Should run in O(1) time
     def getMin(self) -> int:
-        
-        return self.min_vals[-1]
-        
+        # print(f'return min from = {self.stack}')
+        return self.stack[-1][1] # deque[-1] = last added, deque[0] = first added
+
 
 
 # Your MinStack object will be instantiated and called as such:
