@@ -42,25 +42,20 @@
 #        """
 
 class Solution:
-    def __init__(self):
-        self.val = 0
 
-    def recDepthSum(self, depth, nestedInt):
-        if nestedInt.isInteger():
-            self.val += nestedInt.getInteger() * depth
-            return 
-        else:
-            for elt in nestedInt.getList():
-                self.recDepthSum(depth + 1, elt)
-        
     def depthSum(self, nestedList: List[NestedInteger]) -> int:
-        # if nestedList.isInteger():
-        #     return nestedList.getInteger()
 
-        for nestedInt in nestedList:
-            self.recDepthSum(1, nestedInt)
+        def depthSumRec(nestedList: List[NestedInteger], depth: int, result: list[int]) -> None:
+            if not nestedList:
+                return
+            for item in nestedList:
+                if item.isInteger():
+                    result[0] += depth * item.getInteger()
+                else:
+                    depthSumRec(item.getList(), depth+1, result)
+            return 
         
-        return self.val
-
-
-        
+        result = [0]
+        depthSumRec(nestedList=nestedList, depth=1, result=result)
+        # print(f'Final sum = {result}')
+        return result[0]
