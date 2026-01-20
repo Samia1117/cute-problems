@@ -1,17 +1,20 @@
 class Codec:
+    # approach 1: using non-ASCII character as delimiter
     delimiter = "å"
+
+    # approach 2: escaping
     def encode(self, strs: List[str]) -> str:
         """Encodes a list of strings to a single string.
         """
         
-        return self.delimiter.join(strs)
+        return Codec.delimiter.join(strs)
 
 
     def decode(self, s: str) -> List[str]:
         """Decodes a single string to a list of strings.
         """
 
-        str_list = s.split(self.delimiter)
+        str_list = s.split(Codec.delimiter)
         return str_list
         
 
