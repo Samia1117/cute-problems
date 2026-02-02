@@ -5,28 +5,30 @@
 #         self.left = left
 #         self.right = right
 class Solution:
-    def traverse(self, nums, root, current_cnt):
-        if root == None:
-            return 
-        if root.left == None and root.right == None:
-            current_cnt += str(root.val)
-            nums.append(current_cnt)
-            return 
-        else:
-            current_cnt += str(root.val)
-            self.traverse(nums, root.left, current_cnt )
-            self.traverse(nums, root.right, current_cnt)
-
     def sumNumbers(self, root: Optional[TreeNode]) -> int:
 
-        nums = []
-        self.traverse(nums, root, "")
-        print("Nums is = ", nums)
-        nums_int = [int(x) for x in nums]
+        paths = []
+        def recurse(root, path_sum, global_sum):
+            if root:
+                path_sum = path_sum * 10 + int(root.val)
+                # print(f'curr_sum = {curr_sum}')
 
-        return sum(nums_int)
+                if not root.left and not root.right:
+                    global_sum[0] += path_sum
+                    return
+                
+                recurse(root.left, path_sum, global_sum) 
+                recurse(root.right, path_sum, global_sum)
         
-        
+        # current_path = []
+        global_sum = [0]
+        recurse(root, 0, global_sum)
 
+        return global_sum[0]
         
-        
+        # print(f'paths = {paths}')
+
+        # return sum([sum(path) for path in paths])
+            
+
+
