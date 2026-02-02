@@ -5,38 +5,25 @@
 #         self.left = left
 #         self.right = right
 class Solution:
-    curr_sum = 0
-
     def rangeSumBST(self, root: Optional[TreeNode], low: int, high: int) -> int:
 
-        def dfs(node):
-            if not node:
-                return 0
+        valid_scores = []
+
+        def helper(root, low, high):
+            if not root:
+                return
             
-            current_val = 0
-            if low <= node.val <= high:
-                current_val = node.val
+            if low <= root.val <= high:
+                valid_scores.append(root.val)
             
-            left_sum = 0
-            right_sum = 0
-            if node.val > low:
-                left_sum = dfs(node.left)
-            if node.val < high:
-                right_sum = dfs(node.right)
+            if root.val >= low:
+                helper(root.left, low, high)
             
-            return current_val + left_sum + right_sum
+            if root.val <= high:
+                helper(root.right, low, high)
         
-        return dfs(root)
+        helper(root, low, high)
 
-        # perform an in order traversal of the bst
-        # if root < low, then don't bother traversing left
-        # if root > high, then don't bother traversing right
-
-        if not root:
-            return 0
-
-        ans = 0
-        dfs(root)
-        return ans
+        return sum(valid_scores)
 
         
