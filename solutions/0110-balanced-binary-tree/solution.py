@@ -1,40 +1,43 @@
 # Definition for a binary tree node.
-# class TreeNode(object):
+# class TreeNode:
 #     def __init__(self, val=0, left=None, right=None):
 #         self.val = val
 #         self.left = left
 #         self.right = right
-class Solution(object):
-    
-    def findHeight(self, root, currentHeight):
-        #print("Current height now: ", currentHeight)
-        #print("root is: ", root)
-        if root == None:
-            #print("returning current height= ", currentHeight)
-            return currentHeight
-        else:
-            return max(
-                self.findHeight(root.right, currentHeight+1), self.findHeight(root.left, currentHeight+1) )
-            
-    def isBalanced(self, root):
-        """
-        :type root: TreeNode
-        :rtype: bool
-        """
-        
-        if root == None:
-            return True
-        
-        rightHeight = self.findHeight(root.right, 0)
-        #print("right is; ", rightHeight)
-        leftHeight = self.findHeight(root.left, 0)
-        #print("left is; ", leftHeight)
-        
-        if abs(rightHeight-leftHeight)>1:
-            return False
-        
-        rightIsBalanced = self.isBalanced(root.right)
-        leftIsBalanced = self.isBalanced(root.left)
-        
-        return rightIsBalanced and leftIsBalanced
+class Solution:
+    def isBalanced(self, root: Optional[TreeNode]) -> bool:
 
+        def check_balanced_and_height(root):
+            if not root:
+                return True, 0
+            
+            left_is_balanced, left_height = check_balanced_and_height(root.left)
+            if not left_is_balanced:
+                return False, None
+                        
+            right_is_balanced, right_height = check_balanced_and_height(root.right)
+            if not right_is_balanced:
+                return False, None
+            
+            return (abs(left_height - right_height) <= 1, 1 + max(left_height, right_height))
+        
+        is_balanced, height = check_balanced_and_height(root)
+        return is_balanced
+
+        # def _height(root: Optional[TreeNode]) -> list[int]:
+
+        #     if not root:
+        #         return 0
+            
+        #     return 1 + max(_height(root.left), _height(root.right))
+        
+        # if not root:
+        #     return True
+        
+        # return self.isBalanced(root.left) and self.isBalanced(root.right) and (
+        #     abs(_height(root.right) - _height(root.left)) <= 1
+        # ) 
+            
+        
+            
+        
